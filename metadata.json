@@ -1,0 +1,15 @@
+{
+  "name": "StropheJS",
+  "category": "network",
+  "icon": "logo.svg",
+  "title": {
+    "en_EN": "StropheJS XMPP Client"
+  },
+  "description": {
+    "en_EN": "StropheJS XMPP Client"
+  },
+  "files": [
+    "index.js",
+    "index.css"
+  ]
+}
