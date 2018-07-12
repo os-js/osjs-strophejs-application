@@ -1,6 +1,6 @@
 {
   "name": "@osjs/strophejs-application",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OS.js v3 Strophe.js Package",
   "osjs": {
     "type": "package"

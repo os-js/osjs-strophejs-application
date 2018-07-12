@@ -44,13 +44,24 @@ import {
   listView
 } from '@osjs/gui';
 
+const availabilities = {
+  chat: 'Available',
+  busy: 'Busy',
+  away: 'Away',
+  offline: 'Offline',
+  invisible: 'Invisible'
+};
+
 // Checks if connection settings are valid
 const validConnection = settings => ['host', 'username', 'password']
   .every(key => !!settings[key]);
 
-// Gets the connection status text
-const getStatusText = status => Object.keys(Strophe.Status)
+// Get connection status text
+const getConnectionStatusText = status => Object.keys(Strophe.Status)
   .find(key => Strophe.Status[key] === status) || 'Disconnected';
+
+// Get availability text
+const getAvailabilityText = availability => availabilities[availability];
 
 // Gets the username from a JID
 const getUsername = jid => jid.split('/')[0];
@@ -67,6 +78,32 @@ const getMessageText = msg => {
   return '';
 };
 
+// Creates a status menu item
+const createStatusMenuItem = (state, actions, availability) => ({
+  type: 'checkbox',
+  label: getAvailabilityText(availability),
+  disabled: !state.connected,
+  checked: state.availability === availability,
+  onclick: () => actions.menuSetStatus(availability)
+});
+
+// File Menu
+const createFileMenu = (state, actions) => ([
+  {label: 'Connection Options', onclick: () => actions.menuOptions()},
+  {label: 'Connect', disabled: state.connected, onclick: () => actions.menuConnect()},
+  {label: 'Disconnect', disabled: !state.connected, onclick: () => actions.menuDisconnect()},
+  {label: 'Quit', onclick: () => actions.menuQuit()}
+]);
+
+// Status
+const createStatusMenu = (state, actions, bus) => ([
+  createStatusMenuItem(state, actions, 'chat'),
+  createStatusMenuItem(state, actions, 'busy'),
+  createStatusMenuItem(state, actions, 'away'),
+  createStatusMenuItem(state, actions, 'offline'),
+  createStatusMenuItem(state, actions, 'invisible'),
+]);
+
 // Creates a new message
 const createMessage = (from, to, msg) => $msg({to, from, type: 'chat'})
   .cnode(Strophe.xmlElement('body', msg)).up()
@@ -77,7 +114,7 @@ const createMessage = (from, to, msg) => $msg({to, from, type: 'chat'})
 const parsePresence = msg => {
   const from = msg.getAttribute('from');
   if (msg.querySelector('error')) {
-    throw new Error(getStatusText(msg));
+    throw new Error(getMessageText(msg));
   }
 
   const show = msg.querySelector('show');
@@ -107,7 +144,10 @@ const ChatMessage = ({self, from, body, date}) => h('div', {
   h('div', {class: 'chat-message-body'}, body)
 ]);
 
+///////////////////////////////////////////////////////////////////////////////
 // Chat Window
+///////////////////////////////////////////////////////////////////////////////
+
 const createChatWindow = (core, proc, parent, bus, options) => {
   const {format} = core.make('osjs/locale');
 
@@ -221,7 +261,10 @@ const createChatWindow = (core, proc, parent, bus, options) => {
   return win;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 // Connection Window
+///////////////////////////////////////////////////////////////////////////////
+
 const createConnectionWindow = (core, proc, parent, bus) => {
   const win = proc.createWindow({
     parent,
@@ -273,13 +316,17 @@ const createConnectionWindow = (core, proc, parent, bus) => {
   return win;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 // Main Window
+///////////////////////////////////////////////////////////////////////////////
+
 const createMainWindow = (core, proc, bus) => {
   const win = proc.createWindow({
     id: 'StropheJSMainWindow',
     icon: proc.resource(proc.metadata.icon),
     title: proc.metadata.title.en_EN,
-    dimension: {width: 400, height: 400}
+    dimension: {width: 400, height: 400},
+    attributes: {closeable: false, visibility: 'restricted'}
   });
 
   const view = (state, actions) => {
@@ -287,19 +334,24 @@ const createMainWindow = (core, proc, bus) => {
 
     return h(Box, {}, [
       h(Menubar, {}, [
-        h(MenubarItem, {}, 'File'),
-        h(MenubarItem, {onclick: () => actions.configure()}, 'Connection'),
-        h(MenubarItem, {}, 'Status')
+        h(MenubarItem, {
+          onclick: ev => actions.menuFile(ev)
+        }, 'File'),
+        h(MenubarItem, {
+          onclick: ev => actions.menuStatus(ev)
+        }, 'Status')
       ]),
       h(ContactView, {box: {shrink: 1, grow: 1}}),
-      h(Statusbar, {}, getStatusText(state.status))
+      h(Statusbar, {}, [
+        `${getConnectionStatusText(state.status)} - ${getAvailabilityText(state.availability)}`
+      ])
     ]);
   };
 
-  win.on('destroy', () => proc.destroy());
-
   win.render($content => {
     const a = app({
+      connected: false,
+      availability: 'chat',
       status: -1,
       contacts: listView.state({
         rows: [],
@@ -310,9 +362,32 @@ const createMainWindow = (core, proc, bus) => {
         }]
       })
     }, {
-      configure: () => () => bus.emit('open-connection-window'),
+      menuOptions: () => () => bus.emit('open-connection-window'),
+      menuConnect: () => () => bus.emit('connect'),
+      menuDisconnect: () => () => bus.emit('disconnect'),
+      menuQuit: () => () => proc.destroy(),
+      menuFile: ev => (state, actions) => {
+        core.make('osjs/contextmenu').show({
+          position: ev.target,
+          menu: createFileMenu(state, actions)
+        });
+      },
+      menuStatus: ev => (state, actions) => {
+        core.make('osjs/contextmenu').show({
+          position: ev.target,
+          menu: createStatusMenu(state, actions)
+        });
+      },
+      menuSetStatus: status => (state, actions) => {
+        bus.emit('set-status', status);
+      },
       getContacts: () => state => state.contacts.rows,
-      setStatus: status => state => ({status}),
+      setAvailability: availability => state => ({availability}),
+      getStatus: () => state => state.status,
+      setStatus: status => state => {
+        const connected = status === Strophe.Status.CONNECTED;
+        return {connected, status};
+      },
       contacts: listView.actions({
         select: ({data}) => {},
         activate: ({data}) => bus.emit('open-chat-window', data.user)
@@ -344,12 +419,17 @@ const createMainWindow = (core, proc, bus) => {
     });
 
     bus.on('status-change', status => a.setStatus(status));
+    bus.on('availability-change', availability => a.setAvailability(availability));
+    bus.on('disconnected', () => a.setStatus(-1));
   });
 
   return win;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 // Connection Window
+///////////////////////////////////////////////////////////////////////////////
+
 const createConnection = (core, proc, bus) => {
   const {host, username, password} = proc.settings;
   try {
@@ -384,17 +464,29 @@ const createConnection = (core, proc, bus) => {
   return null;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 // Main Application
+///////////////////////////////////////////////////////////////////////////////
+
 const createApplication = (core, proc) => {
   let connection;
   const bus = core.make('osjs/event-handler', 'Strophe.js');
   const win = createMainWindow(core, proc, bus);
+  const tray = core.make('osjs/tray').create({
+    title: 'Strophe.js',
+    icon: proc.resource(proc.metadata.icon),
+  }, () => {
+    win.raise();
+    win.focus();
+  });
 
   const disconnect = () => {
     if (connection) {
       connection.disconnect();
     }
     connection = null;
+
+    bus.emit('disconnected');
   };
 
   const findChatWindow = from => {
@@ -448,15 +540,20 @@ const createApplication = (core, proc) => {
 
   bus.on('set-status', (status, text) => {
     const pres = $pres({
-      from: connection.jid,
-      show: status
+      from: connection.jid
     });
+
+    pres.c('show', status);
 
     if (text) {
       pres.c('status', text);
     }
 
     connection.send(pres.tree());
+
+    // FIXME: Mayne it's just google hangouts, but we really want to set the status
+    // from a server message
+    bus.emit('availability-change', status);
   });
 
   bus.on('set-connection', (settings, connect) => {
@@ -485,9 +582,14 @@ const createApplication = (core, proc) => {
 
   proc.on('destroy', () => disconnect());
   proc.on('destroy', () => bus.off());
+  proc.on('destroy', () => tray.destroy());
+  win.on('destroy', () => proc.destroy());
 };
 
+///////////////////////////////////////////////////////////////////////////////
 // Base
+///////////////////////////////////////////////////////////////////////////////
+
 const create = (core, args, options, metadata) => {
   const proc = core.make('osjs/application', {
     args,
