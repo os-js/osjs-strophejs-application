@@ -16,3 +16,5 @@ This is the Strophe.js XMPP Chat Application for OS.js v3
 ## Installation
 
 Set up a [punjab](https://github.com/twonds/punjab) server and simply configure this application to connect to the BOSH endpoint.
+
+*If anyone knows of an actually working BOSH server on Node, let me know!*
