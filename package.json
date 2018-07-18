@@ -11,7 +11,8 @@
     "strophe.js": "^1.2.15"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint *.js"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/os-js/osjs-strophejs-package/issues"
   },
-  "homepage": "https://github.com/os-js/osjs-strophejs-package#readme"
+  "homepage": "https://github.com/os-js/osjs-strophejs-package#readme",
+  "devDependencies": {
+    "eslint": "^5.1.0"
+  }
 }
