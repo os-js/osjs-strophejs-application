@@ -27,6 +27,7 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  */
+import './index.scss';
 
 import {h, app} from 'hyperapp';
 import {$pres, $msg, Strophe} from 'strophe.js';

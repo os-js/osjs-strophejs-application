@@ -5,14 +5,18 @@
   "osjs": {
     "type": "package"
   },
-  "dependencies": {
-    "@osjs/gui": "^3.0.0-alpha.21",
-    "hyperapp": "^1.2.6",
-    "strophe.js": "^1.2.15"
-  },
+  "dependencies": {},
+  "files": [
+    "dist/",
+    "metadata.json"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "eslint": "eslint *.js"
+    "eslint": "eslint index.js",
+    "stylelint": "stylelint index.scss",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "prepublishOnly": "npm run eslint && npm run stylelint && rm ./dist/* && npm run build"
   },
   "repository": {
     "type": "git",
@@ -28,6 +32,26 @@
   },
   "homepage": "https://github.com/os-js/osjs-strophejs-package#readme",
   "devDependencies": {
-    "eslint": "^5.1.0"
+    "@babel/core": "^7.0.0-beta.54",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.54",
+    "@babel/preset-env": "^7.0.0-beta.54",
+    "@babel/runtime": "^7.0.0-beta.54",
+    "@osjs/gui": "^3.0.0-alpha.21",
+    "babel-loader": "^8.0.0-beta.4",
+    "copy-webpack-plugin": "^4.5.2",
+    "css-loader": "^1.0.0",
+    "eslint": "^5.1.0",
+    "file-loader": "^1.1.11",
+    "hyperapp": "^1.2.0",
+    "mini-css-extract-plugin": "^0.4.1",
+    "node-sass": "^4.9.2",
+    "optimize-css-assets-webpack-plugin": "^5.0.0",
+    "sass-loader": "^7.0.3",
+    "stylelint": "^9.3.0",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-scss": "^3.1.3",
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0",
+    "strophe.js": "^1.2.15"
   }
 }

@@ -10,7 +10,7 @@
     "en_EN": "StropheJS XMPP Client"
   },
   "files": [
-    "index.js",
-    "index.css"
+    "main.js",
+    "main.css"
   ]
 }
