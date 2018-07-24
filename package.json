@@ -1,7 +1,7 @@
 {
   "name": "@osjs/strophejs-application",
   "version": "1.1.0",
-  "description": "OS.js v3 Strophe.js Package",
+  "description": "OS.js v3 Strophe.js Application",
   "osjs": {
     "type": "package"
   },
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/os-js/osjs-strophejs-package.git"
+    "url": "git+https://github.com/os-js/osjs-strophejs-application.git"
   },
   "keywords": [
     "osjs"
@@ -28,9 +28,9 @@
   "author": "Anders Evenrud <andersevenrud@gmail.com>",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/os-js/osjs-strophejs-package/issues"
+    "url": "https://github.com/os-js/osjs-strophejs-application/issues"
   },
-  "homepage": "https://github.com/os-js/osjs-strophejs-package#readme",
+  "homepage": "https://github.com/os-js/osjs-strophejs-application#readme",
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.54",
     "@babel/plugin-transform-runtime": "^7.0.0-beta.54",
