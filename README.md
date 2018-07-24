@@ -22,5 +22,4 @@ Set up a [punjab](https://github.com/twonds/punjab) server and simply configure 
 ```bash
 npm install --save @osjs/strophejs-application
 npm run package:discover
-npm run build:manifest
 ```
