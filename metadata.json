@@ -4,10 +4,12 @@
   "icon": "logo.svg",
   "singleton": true,
   "title": {
-    "en_EN": "StropheJS XMPP Client"
+    "en_EN": "StropheJS XMPP Client",
+    "fr_FR": "Client XMPP StropheJS"
   },
   "description": {
-    "en_EN": "StropheJS XMPP Client"
+    "en_EN": "StropheJS XMPP Client",
+    "fr_FR": "Client XMPP StropheJS"
   },
   "files": [
     "main.js",
