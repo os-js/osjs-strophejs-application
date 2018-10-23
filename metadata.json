@@ -5,10 +5,12 @@
   "singleton": true,
   "title": {
     "en_EN": "StropheJS XMPP Client",
+    "nb_NO": "StropheJS XMPP Klient",
     "fr_FR": "Client XMPP StropheJS"
   },
   "description": {
-    "en_EN": "StropheJS XMPP Client",
+    "en_EN": "Chat with friends via XMPP (Gtalk)",
+    "nb_NO": "Snakk med venner via XMPP (GTalk)",
     "fr_FR": "Client XMPP StropheJS"
   },
   "files": [
