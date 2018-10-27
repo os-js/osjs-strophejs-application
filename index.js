@@ -43,7 +43,7 @@ import {
   Toolbar,
   Statusbar,
   listView
-} from '@osjs/gui/index.js';
+} from '@osjs/gui';
 
 const availabilities = {
   chat: 'Available',
