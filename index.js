@@ -286,11 +286,11 @@ const createConnectionWindow = (core, proc, parent, bus) => {
       ]),
       h(BoxContainer, {orientation: 'horizontal'}, [
         h('div', {}, 'Username:'),
-        h(TextField, {value: state.username, oninput: (ev, value) => actions.setusername(value)})
+        h(TextField, {value: state.username, oninput: (ev, value) => actions.setUsername(value)})
       ]),
       h(BoxContainer, {orientation: 'horizontal'}, [
         h('div', {}, 'Password:'),
-        h(TextField, {type: 'password', value: state.password, oninput: (ev, value) => actions.setpassword(value)})
+        h(TextField, {type: 'password', value: state.password, oninput: (ev, value) => actions.setPassword(value)})
       ])
     ]),
     h(Toolbar, {justify: 'flex-end'}, [
