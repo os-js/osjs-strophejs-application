@@ -20,6 +20,6 @@ Set up a [punjab](https://github.com/twonds/punjab) server and simply configure 
 *If anyone knows of an actually working BOSH server on Node, let me know!*
 
 ```bash
-npm install --save @osjs/strophejs-application
+npm install --save --production @osjs/strophejs-application
 npm run package:discover
 ```
