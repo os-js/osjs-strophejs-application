@@ -29,6 +29,8 @@
  */
 import './index.scss';
 
+import osjs from 'osjs';
+import {name as applicationName} from './metadata.json';
 import {h, app} from 'hyperapp';
 import {$pres, $msg, Strophe} from 'strophe.js';
 import {
@@ -145,9 +147,9 @@ const ChatMessage = ({self, from, body, date}) => h('div', {
   h('div', {class: 'chat-message-body'}, body)
 ]);
 
-///////////////////////////////////////////////////////////////////////////////
-// Chat Window
-///////////////////////////////////////////////////////////////////////////////
+/*
+ * Chat Window
+ */
 
 const createChatWindow = (core, proc, parent, bus, options) => {
   const {format} = core.make('osjs/locale');
@@ -262,9 +264,9 @@ const createChatWindow = (core, proc, parent, bus, options) => {
   return win;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// Connection Window
-///////////////////////////////////////////////////////////////////////////////
+/*
+ * Connection Window
+ */
 
 const createConnectionWindow = (core, proc, parent, bus) => {
   const win = proc.createWindow({
@@ -317,9 +319,9 @@ const createConnectionWindow = (core, proc, parent, bus) => {
   return win;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// Main Window
-///////////////////////////////////////////////////////////////////////////////
+/*
+ * Main Window
+ */
 
 const createMainWindow = (core, proc, bus) => {
   const win = proc.createWindow({
@@ -427,9 +429,9 @@ const createMainWindow = (core, proc, bus) => {
   return win;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// Connection Window
-///////////////////////////////////////////////////////////////////////////////
+/*
+ * Connection Window
+ */
 
 const createConnection = (core, proc, bus) => {
   const {host, username, password} = proc.settings;
@@ -465,9 +467,9 @@ const createConnection = (core, proc, bus) => {
   return null;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// Main Application
-///////////////////////////////////////////////////////////////////////////////
+/*
+ * Main Application
+ */
 
 const createApplication = (core, proc) => {
   let connection;
@@ -587,9 +589,9 @@ const createApplication = (core, proc) => {
   win.on('destroy', () => proc.destroy());
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// Base
-///////////////////////////////////////////////////////////////////////////////
+/*
+ * Base
+ */
 
 const create = (core, args, options, metadata) => {
   const proc = core.make('osjs/application', {
@@ -609,4 +611,4 @@ const create = (core, args, options, metadata) => {
   return proc;
 };
 
-OSjs.make('osjs/packages').register('StropheJS', create);
+osjs.register(applicationName, create);
