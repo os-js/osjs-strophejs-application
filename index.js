@@ -455,9 +455,9 @@ const createConnection = (core, proc, bus) => {
       connection.connect(username, password, cb);
     }
 
-    connection.addHandler(msg => bus.emit('receive-message', msg), null, 'message', null, null,  null); 
-    connection.addHandler(pres => bus.emit('presence', pres), null, 'presence', null, null,  null); 
-    connection.addHandler(() => true, 'jabber:iq:roster', 'iq', 'set'); 
+    connection.addHandler(msg => bus.emit('receive-message', msg), null, 'message', null, null, null);
+    connection.addHandler(pres => bus.emit('presence', pres), null, 'presence', null, null, null);
+    connection.addHandler(() => true, 'jabber:iq:roster', 'iq', 'set');
 
     return connection;
   } catch (e) {
