@@ -64,7 +64,7 @@ const getConnectionStatusText = status => Object.keys(Strophe.Status)
   .find(key => Strophe.Status[key] === status) || 'Disconnected';
 
 // Get availability text
-const getAvailabilityText = availability => availabilities[availability];
+const getAvailabilityText = availability => availabilities[availability] || availability;
 
 // Gets the username from a JID
 const getUsername = jid => jid.split('/')[0];
@@ -405,7 +405,7 @@ const createMainWindow = (core, proc, bus) => {
         const foundIndex = contacts.findIndex(c => c.data.user === contact.user);
 
         const iter = {
-          columns: [contact.user, contact.status],
+          columns: [contact.user, getAvailabilityText(contact.status || 'offline')],
           data: contact
         };
 
