@@ -473,7 +473,7 @@ const createConnection = (core, proc, bus) => {
 
 const createApplication = (core, proc) => {
   let connection;
-  const bus = core.make('osjs/event-handler', 'Strophe.js');
+  const bus = core.make('osjs/event-emitter', 'Strophe.js');
   const win = createMainWindow(core, proc, bus);
   const tray = core.make('osjs/tray').create({
     title: 'Strophe.js',
