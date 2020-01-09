@@ -55,6 +55,13 @@ const availabilities = {
   invisible: 'Invisible'
 };
 
+// Creates a nicer debug output of messages
+const domFromString = str => {
+  const el = document.createElement('html');
+  el.innerHTML = str;
+  return el.getElementsByTagName('body')[0];
+};
+
 // Checks if connection settings are valid
 const validConnection = settings => ['host', 'username', 'password']
   .every(key => !!settings[key]);
@@ -437,8 +444,8 @@ const createConnection = (core, proc, bus) => {
   const {host, username, password} = proc.settings;
   try {
     const connection = new Strophe.Connection(host);
-    connection.rawInput = d => console.log('input', d);
-    connection.rawOutput = d => console.log('output', d);
+    connection.rawInput = d => console.debug('input', domFromString(d));
+    connection.rawOutput = d => console.debug('output', domFromString(d));
 
     const cb = (status) => {
       bus.emit('status-change', status);
