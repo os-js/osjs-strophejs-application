@@ -37,11 +37,7 @@ import {
   Statusbar,
   listView
 } from '@osjs/gui';
-import {
-  getAvailabilityText,
-  parsePresence,
-  getConnectionStatusText
-} from './utils.js';
+import {getAvailabilityText, parsePresence, getConnectionStatusText} from './utils.js';
 
 const createStatusMenuItem = (state, actions, availability) => ({
   type: 'checkbox',

@@ -31,11 +31,7 @@ import {$pres, Strophe} from 'strophe.js';
 import {createConnectionWindow} from './connection-window.js';
 import {createChatWindow} from './chat-window.js';
 import {createMainWindow} from './main-window.js';
-import {
-  getUsername,
-  domFromString,
-  validConnection,
-} from './utils.js';
+import {getUsername, domFromString, validConnection} from './utils.js';
 
 const createConnection = (core, proc, bus) => {
   const {host, username, password} = proc.settings;
