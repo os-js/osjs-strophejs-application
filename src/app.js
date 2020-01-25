@@ -27,6 +27,7 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  */
+import 'strophejs-plugin-muc';
 import {$pres, Strophe} from 'strophe.js';
 import {createConnectionWindow} from './connection-window.js';
 import {createChatWindow} from './chat-window.js';
