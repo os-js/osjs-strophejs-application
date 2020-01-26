@@ -15,11 +15,54 @@ This is the Strophe.js XMPP Chat Application for OS.js v3
 
 ## Installation
 
-Set up a [punjab](https://github.com/twonds/punjab) server and simply configure this application to connect to the BOSH endpoint.
-
-*If anyone knows of an actually working BOSH server on Node, let me know!*
-
 ```bash
 npm install --save --production @osjs/strophejs-application
 npm run package:discover
+```
+
+## Usage
+
+This application connects to a standard XMPP server using BOSCH.
+
+### Using external servers
+
+Set up a [punjab](https://github.com/twonds/punjab) server and simply configure this application to connect to the BOSH endpoint.
+
+```
+Host: http://my-punjab-server/http-bind
+Username: username@gmail.com
+Password: abc123
+```
+
+### Custom BOSCH Server using Prosody
+
+If you use Docker, you can simply add [Prosody](https://prosody.im/) to your docker-compose file:
+
+> **NOTE: You have to copy the default prosody configuration into `src/etc/prosody` first. Then enable the BOSCH http server module.**
+
+> NOTE: A domain name or hostname resolved via DNS is recommended (`my-domain.com` in this example)
+
+```
+services:
+  prosody:
+    image: prosody/prosody
+    ports:
+      - "5280:5280"
+    volumes:
+      - "./logs/prosody:/var/log/prosody"
+      - "./src/prosody/etc:/etc/prosody"
+```
+
+You can now add users via the docker container with:
+
+```
+docker-compose exec prosody prosodyctl adduser username@my-domain.com
+```
+
+Then in the OS.js application:
+
+```
+Host: http://my-domain.com/http-bind
+Username: username@my-domain.com
+Password: abc123
 ```
