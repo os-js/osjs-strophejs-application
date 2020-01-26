@@ -132,6 +132,12 @@ const createApplication = (core, proc) => {
         target: name,
         muc: true
       });
+
+      const onRoomMessage = (...args) => chatWindow.emit('strophejs/room:message', ...args);
+      const onRoomPresence = (...args) => chatWindow.emit('strophejs/room:precense', ...args);
+      const onRoomRoster = (...args) => chatWindow.emit('strophejs/room:roster', ...args);
+
+      connection.muc.join(name, null, onRoomMessage, onRoomPresence, onRoomRoster);
     }
   };
 
@@ -140,10 +146,9 @@ const createApplication = (core, proc) => {
       title: 'Room name',
       message: 'Enter room name',
       parent: win,
-      value: `conference@${proc.settings.username.split('@')[1]}`
+      value: `room@conference.${proc.settings.username.split('@')[1]}`
     }, (btn, value) => {
       if (btn === 'ok' && value) {
-        connection.muc.join(value);
         findOrCreateMucWindow(value);
       }
     });
@@ -195,10 +200,23 @@ const createApplication = (core, proc) => {
     }
   };
 
+  const onLeaveRoom = name => {
+    connection.muc.leave(name);
+  };
+
+  const sendMessage = (msg, target, muc) => {
+    if (muc) {
+      connection.muc.groupchat(target, msg);
+    } else {
+      connection.send(msg);
+    }
+  };
+
   bus.on('open-room-join-dialog', () => createJoinRoomDialog());
   bus.on('open-connection-window', () => createConnectionWindow(core, proc, win, bus));
   bus.on('open-chat-window', from => findOrCreateChatWindow(from).focus());
-  bus.on('send-message', msg => connection.send(msg));
+  bus.on('send-message', sendMessage);
+  bus.on('leave-room', onLeaveRoom);
   bus.on('receive-message', onReceiveMessage);
   bus.on('set-status', onSetStatus);
   bus.on('set-connection', onSetConnection);
