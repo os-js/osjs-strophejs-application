@@ -34,20 +34,22 @@
   }
 
   .chat-message {
-    padding: 1em;
-    margin: 1em;
+    padding: 0.5em;
     box-sizing: border-box;
-    background-color: #fafafa;
 
-    & > .chat-message-date {
-      font-size: 80%;
-      opacity: 0.5;
+    &__header {
+      display: flex;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &--username {
+        font-weight: bold;
+      }
     }
 
-    & > .chat-message-from {
-      font-weight: bold;
-      margin-top: 1em;
-      margin-bottom: 1em;
+    &__body {
+      margin-top: 0.5em;
     }
   }
 }

@@ -41,9 +41,15 @@ import {getUsername, getMessageText, createMessage} from './utils.js';
 const ChatMessage = ({self, from, body, date}) => h('div', {
   class: ['chat-message', self ? 'chat-message-self' : 'chat-message-other'].join(' ')
 }, [
-  h('div', {class: 'chat-message-date'}, date),
-  h('div', {class: 'chat-message-from'}, getUsername(from)),
-  h('div', {class: 'chat-message-body'}, body)
+  h('div', {
+    class: 'chat-message__header'
+  }, [
+    h('div', {class: 'chat-message__header--date'}, `${date} - `),
+    h('div', {class: 'chat-message__header--username'}, `${getUsername(from)}:`)
+  ]),
+  h('div', {
+    class: 'chat-message__body'
+  }, body)
 ]);
 
 export const createChatWindow = (core, proc, parent, bus, options) => {
@@ -60,7 +66,7 @@ export const createChatWindow = (core, proc, parent, bus, options) => {
 
   const messages = (state, actions) => state.messages.map(({date, msg}) => {
     return h(ChatMessage, {
-      date: format(date, 'fullDate'),
+      date: format(date, 'longTime'),
       self: getUsername(msg.getAttribute('from')) !== getUsername(options.user),
       to: msg.getAttribute('to'),
       from: msg.getAttribute('from'),
