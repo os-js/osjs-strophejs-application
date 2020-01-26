@@ -126,7 +126,7 @@ export const createChatWindow = (core, proc, parent, bus, options) => {
           return;
         }
 
-        const msg = createMessage(options.self, options.user, value);
+        const msg = createMessage(options.self, options.target, value);
 
         actions.sendMessage(msg);
         actions.addMessage({date: new Date(), msg});

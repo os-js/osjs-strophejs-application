@@ -113,11 +113,40 @@ const createApplication = (core, proc) => {
         id,
         self: connection.jid,
         title: username,
-        user: from
+        target: from
       });
     }
 
     return chatWindow;
+  };
+
+  const findOrCreateMucWindow = name => {
+    let chatWindow = findChatWindow(name);
+    if (!chatWindow) {
+      const id = 'StropheJSChatWindow_' + name;
+
+      chatWindow = createChatWindow(core, proc, win, bus, {
+        id,
+        self: connection.jid,
+        title: name,
+        target: name,
+        muc: true
+      });
+    }
+  };
+
+  const createJoinRoomDialog = () => {
+    core.make('osjs/dialog', 'prompt', {
+      title: 'Room name',
+      message: 'Enter room name',
+      parent: win,
+      value: `conference@${proc.settings.username.split('@')[1]}`
+    }, (btn, value) => {
+      if (btn === 'ok' && value) {
+        connection.muc.join(value);
+        findOrCreateMucWindow(value);
+      }
+    });
   };
 
   const onReceiveMessage = msg => {
@@ -166,6 +195,7 @@ const createApplication = (core, proc) => {
     }
   };
 
+  bus.on('open-room-join-dialog', () => createJoinRoomDialog());
   bus.on('open-connection-window', () => createConnectionWindow(core, proc, win, bus));
   bus.on('open-chat-window', from => findOrCreateChatWindow(from).focus());
   bus.on('send-message', msg => connection.send(msg));
