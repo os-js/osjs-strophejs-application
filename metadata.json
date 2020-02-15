@@ -6,12 +6,14 @@
   "title": {
     "en_EN": "StropheJS XMPP Client",
     "nb_NO": "StropheJS XMPP Klient",
-    "fr_FR": "Client XMPP StropheJS"
+    "fr_FR": "Client XMPP StropheJS",
+    "pt_BR": "Cliente StropheJS XMPP"
   },
   "description": {
     "en_EN": "Chat with friends via XMPP (Gtalk)",
     "nb_NO": "Snakk med venner via XMPP (GTalk)",
-    "fr_FR": "Client XMPP StropheJS"
+    "fr_FR": "Client XMPP StropheJS",
+    "pt_BR": "Converse com amigos via XMPP (GTalk)"
   },
   "files": [
     "main.js",
