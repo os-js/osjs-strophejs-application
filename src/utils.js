@@ -67,6 +67,7 @@ export const getMessageText = msg => {
       .join('\n');
   }
 
+  console.warn(msg);
   return '';
 };
 

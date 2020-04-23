@@ -51,6 +51,7 @@ const createFileMenu = (state, actions) => ([
   {label: 'Connection Options', onclick: () => actions.menuOptions()},
   {label: 'Connect', disabled: state.connected, onclick: () => actions.menuConnect()},
   {label: 'Disconnect', disabled: !state.connected, onclick: () => actions.menuDisconnect()},
+  {label: 'Join Room', disabled: !state.connected, onclick: () => actions.menuJoinRoom()},
   {label: 'Quit', onclick: () => actions.menuQuit()}
 ]);
 
@@ -107,6 +108,7 @@ export const createMainWindow = (core, proc, bus) => {
       menuOptions: () => () => bus.emit('open-connection-window'),
       menuConnect: () => () => bus.emit('connect'),
       menuDisconnect: () => () => bus.emit('disconnect'),
+      menuJoinRoom: () => () => bus.emit('open-room-join-dialog'),
       menuQuit: () => () => proc.destroy(),
       menuFile: ev => (state, actions) => {
         core.make('osjs/contextmenu').show({

@@ -27,6 +27,7 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @licence Simplified BSD License
  */
+import 'strophejs-plugin-muc';
 import {$pres, Strophe} from 'strophe.js';
 import {createConnectionWindow} from './connection-window.js';
 import {createChatWindow} from './chat-window.js';
@@ -112,11 +113,45 @@ const createApplication = (core, proc) => {
         id,
         self: connection.jid,
         title: username,
-        user: from
+        target: from
       });
     }
 
     return chatWindow;
+  };
+
+  const findOrCreateMucWindow = name => {
+    let chatWindow = findChatWindow(name);
+    if (!chatWindow) {
+      const id = 'StropheJSChatWindow_' + name;
+
+      chatWindow = createChatWindow(core, proc, win, bus, {
+        id,
+        self: connection.jid,
+        title: name,
+        target: name,
+        muc: true
+      });
+
+      const onRoomMessage = (...args) => chatWindow.emit('strophejs/room:message', ...args);
+      const onRoomPresence = (...args) => chatWindow.emit('strophejs/room:precense', ...args);
+      const onRoomRoster = (...args) => chatWindow.emit('strophejs/room:roster', ...args);
+
+      connection.muc.join(name, null, onRoomMessage, onRoomPresence, onRoomRoster);
+    }
+  };
+
+  const createJoinRoomDialog = () => {
+    core.make('osjs/dialog', 'prompt', {
+      title: 'Room name',
+      message: 'Enter room name',
+      parent: win,
+      value: `room@conference.${proc.settings.username.split('@')[1]}`
+    }, (btn, value) => {
+      if (btn === 'ok' && value) {
+        findOrCreateMucWindow(value);
+      }
+    });
   };
 
   const onReceiveMessage = msg => {
@@ -165,9 +200,23 @@ const createApplication = (core, proc) => {
     }
   };
 
+  const onLeaveRoom = name => {
+    connection.muc.leave(name);
+  };
+
+  const sendMessage = (msg, target, muc) => {
+    if (muc) {
+      connection.muc.groupchat(target, msg);
+    } else {
+      connection.send(msg);
+    }
+  };
+
+  bus.on('open-room-join-dialog', () => createJoinRoomDialog());
   bus.on('open-connection-window', () => createConnectionWindow(core, proc, win, bus));
   bus.on('open-chat-window', from => findOrCreateChatWindow(from).focus());
-  bus.on('send-message', msg => connection.send(msg));
+  bus.on('send-message', sendMessage);
+  bus.on('leave-room', onLeaveRoom);
   bus.on('receive-message', onReceiveMessage);
   bus.on('set-status', onSetStatus);
   bus.on('set-connection', onSetConnection);
