@@ -67,7 +67,7 @@ export const createChatWindow = (core, proc, parent, bus, options) => {
   const messages = (state, actions) => state.messages.map(({date, msg}) => {
     return h(ChatMessage, {
       date: format(date, 'longTime'),
-      self: getUsername(msg.getAttribute('from')) !== getUsername(options.user),
+      self: getUsername(msg.getAttribute('from')) !== getUsername(options.target),
       to: msg.getAttribute('to'),
       from: msg.getAttribute('from'),
       type: msg.getAttribute('type'),
@@ -126,21 +126,20 @@ export const createChatWindow = (core, proc, parent, bus, options) => {
           return;
         }
 
-        const msg = createMessage(options.self, options.user, value);
-
-        actions.sendMessage(msg);
+        const msg = createMessage(options.self, options.target, value);
+        actions.sendMessage(options.muc ? value : msg);
         actions.addMessage({date: new Date(), msg});
 
         setTimeout(() => (textarea.value = ''), 1);
       },
       setTypeStatus: typing => () => ({typing}),
-      sendMessage: msg => () => bus.emit('send-message', msg),
+      sendMessage: msg => () => bus.emit('send-message', msg, options.target, options.muc),
       addMessage: obj => state => ({messages: [...state.messages, obj]})
     }, view, $content);
 
     let typeStatusTimeout;
 
-    win.on('strophejs/message', msg => {
+    const addMessage = msg => {
       a.addMessage({date: new Date(), msg});
 
       const container = $content.querySelector('.chat-messages');
@@ -149,7 +148,21 @@ export const createChatWindow = (core, proc, parent, bus, options) => {
           container.scrollTop = container.scrollHeight;
         }, 1);
       }
+    };
+
+    if (options.muc) {
+      win.on('destroy', () => bus.emit('leave-room', options.target));
+    }
+
+    win.on('strophejs/room:message', addMessage);
+    win.on('strophejs/room:presence', (...args) => {
+      console.warn('TODO', 'strophejs/room:presence', args);
     });
+    win.on('strophejs/room:roster', (...args) => {
+      console.warn('TODO', 'strophejs/room:roster', args);
+    });
+
+    win.on('strophejs/message', addMessage);
 
     win.on('strophejs/started-typing', () => {
       clearTimeout(typeStatusTimeout);
